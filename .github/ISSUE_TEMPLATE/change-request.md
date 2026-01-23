@@ -3,8 +3,7 @@ name: Change Request
 about: Update functionality that already exists.
 title: "[CHANGE]"
 labels: enhancement
-assignees: rohanb10
-
+assignees: verheyenkoen
 ---
 
 ## What would you like to change

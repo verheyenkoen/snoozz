@@ -1,147 +1,192 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>nap room | snoozz</title>
-	<link rel="icon" type="image/png" sizes="96x96" href="../icons/ext-icon-128.png">
-	<link rel="stylesheet" href="../styles/common.css" />
-	<link rel="stylesheet" href="../styles/nap-room.css" />
-	<link rel="stylesheet" href="../styles/checkbox.css" />
-	<link rel="stylesheet" href="../styles/clock.css" />
-</head>
-<body>
-	<div class="scroll-logo hidden"><img src="../icons/logo.svg"></div>
-	<div class="flex center">
-		<img class="snoozz-logo hoverable" src="../icons/logo.svg">
-		<img class="snoozz-text" src="../icons/snoozz.png">
-	</div>
-	<div tabindex="0" data-hover="Settings" class="settings"><img src="../icons/settings.png"></div>
-	<div class="overlay blur-overlay changelog-overlay">
-		<div class="snoozz-border">
-			<div class="changelog-container"> <!-- add 'disabled' class to hide -->
-				<h2 class="center">Snoozz has been updated <span id="v"></span>&nbsp;🎉</h2>
-				<h3>What's new?</h3>
-				<ul>
-					<li>New Icons - Hats!</li>
-					<p>It's summer here in Mumbai, so time to break out all the best headwear.</p>
-					<li>Incognito Support</li>
-					<p>What kind of weirdos snooze their "private" tabs? Definitely not me.</p>
-					<!-- <li>Edit Tab Details in the Nap Room</li> -->
-					<!-- <p>Want to change a url or window name after snoozing it? Now you can.</p> -->
-					<li>Notification Sounds</li><br>
-					<!-- <p>You now have even more control of what notifications you want to see (and hear).</p> -->
-					<li>Snooze local files (Blink based browsers only)</li>
-				</ul>
-				<br>
-				<h3>Coming soon...</h3>
-				<ul>
-					<li>Edit Tab Details</li>
-					<li>A brand new Settings page</li>
-					<li>Smarter Quick Actions in the popup</li>
-					<li>More granular notification contol</li>
-				</ul>
-				<p class="center">Open the <a href="https://snoozz.me/changelog">Changelog</a> to see all previous version changes</p>
-			</div>
-		</div>
-	</div>
-	<div class="overlay blur-overlay edit-details-overlay">
-		<div class="snoozz-border">
-			<div class="details-container">
-				<h2>Edit <span></span> Details</h2>
-				<div class="form-group flex">
-					<div class="icon-container title-group">
-						<img class="icon" id="details_icon" src="../icons/unknown.png">
-					</div>
-					<div class="details-input">
-						<label for="details_title">TITLE</label>
-						<input type="text" id="details_title" value="testing that booty">
-					</div>
-				</div>
-				<div class="form-group flex url-group">
-					<div class="icon-container">
-						<img class="icon" src="../icons/url.svg">
-					</div>
-					<div class="details-input">
-						<label for="details_url">URL</label>
-						<input type="text" id="details_url" value="who dat boy">
-					</div>
-				</div>
-				<div class="flex checkbox-group">
-					<label class="checkbox path pinned-checkbox flex">
-						<input type="checkbox" tabindex="0">
-						<svg viewBox="0 0 21 21">
-							<path d="M5 10.75 8.5 14.25 19.4 2.3C18.83 1.43 18.03 1 17 1L4 1C2.35 1 1 2.35 1 4L1 17C1 18.65 2.35 20 4 20L17 20C18.65 20 20 18.65 20 17L20 7.99"></path>
-						</svg>
-						<span>Pinned Tab</span>
-					</label>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>nap room | snoozz</title>
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="../icons/ext-icon-128.png"
+    />
+    <link rel="stylesheet" href="../styles/common.css" />
+    <link rel="stylesheet" href="../styles/nap-room.css" />
+    <link rel="stylesheet" href="../styles/checkbox.css" />
+    <link rel="stylesheet" href="../styles/clock.css" />
+  </head>
+  <body>
+    <div class="scroll-logo hidden"><img src="../icons/logo.svg" /></div>
+    <div class="flex center">
+      <img class="snoozz-logo hoverable" src="../icons/logo.svg" />
+      <img class="snoozz-text" src="../icons/snoozz.png" />
+    </div>
+    <div tabindex="0" data-hover="Settings" class="settings">
+      <img src="../icons/settings.png" />
+    </div>
+    <div class="overlay blur-overlay changelog-overlay">
+      <div class="snoozz-border">
+        <div class="changelog-container">
+          <!-- add 'disabled' class to hide -->
+          <h2 class="center">
+            Snoozz has been updated <span id="v"></span>&nbsp;🎉
+          </h2>
+          <h3>What's new?</h3>
+          <ul>
+            <li>New Icons - Hats!</li>
+            <p>
+              It's summer here in Mumbai, so time to break out all the best
+              headwear.
+            </p>
+            <li>Incognito Support</li>
+            <p>
+              What kind of weirdos snooze their "private" tabs? Definitely not
+              me.
+            </p>
+            <!-- <li>Edit Tab Details in the Nap Room</li> -->
+            <!-- <p>Want to change a url or window name after snoozing it? Now you can.</p> -->
+            <li>Notification Sounds</li>
+            <br />
+            <!-- <p>You now have even more control of what notifications you want to see (and hear).</p> -->
+            <li>Snooze local files (Blink based browsers only)</li>
+          </ul>
+          <br />
+          <h3>Coming soon...</h3>
+          <ul>
+            <li>Edit Tab Details</li>
+            <li>A brand new Settings page</li>
+            <li>Smarter Quick Actions in the popup</li>
+            <li>More granular notification contol</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="overlay blur-overlay edit-details-overlay">
+      <div class="snoozz-border">
+        <div class="details-container">
+          <h2>Edit <span></span> Details</h2>
+          <div class="form-group flex">
+            <div class="icon-container title-group">
+              <img class="icon" id="details_icon" src="../icons/unknown.png" />
+            </div>
+            <div class="details-input">
+              <label for="details_title">TITLE</label>
+              <input
+                type="text"
+                id="details_title"
+                value="testing that booty"
+              />
+            </div>
+          </div>
+          <div class="form-group flex url-group">
+            <div class="icon-container">
+              <img class="icon" src="../icons/url.svg" />
+            </div>
+            <div class="details-input">
+              <label for="details_url">URL</label>
+              <input type="text" id="details_url" value="who dat boy" />
+            </div>
+          </div>
+          <div class="flex checkbox-group">
+            <label class="checkbox path pinned-checkbox flex">
+              <input type="checkbox" tabindex="0" />
+              <svg viewBox="0 0 21 21">
+                <path
+                  d="M5 10.75 8.5 14.25 19.4 2.3C18.83 1.43 18.03 1 17 1L4 1C2.35 1 1 2.35 1 4L1 17C1 18.65 2.35 20 4 20L17 20C18.65 20 20 18.65 20 17L20 7.99"
+                ></path>
+              </svg>
+              <span>Pinned Tab</span>
+            </label>
 
-					<label class="checkbox path incognito-checkbox flex">
-						<input type="checkbox" tabindex="0">
-						<svg viewBox="0 0 21 21">
-							<path d="M5 10.75 8.5 14.25 19.4 2.3C18.83 1.43 18.03 1 17 1L4 1C2.35 1 1 2.35 1 4L1 17C1 18.65 2.35 20 4 20L17 20C18.65 20 20 18.65 20 17L20 7.99"></path>
-						</svg>
-						<span>Incognito</span>
-					</label>
-					<label class="checkbox path new-window-checkbox flex">
-						<input type="checkbox" tabindex="0">
-						<svg viewBox="0 0 21 21">
-							<path d="M5 10.75 8.5 14.25 19.4 2.3C18.83 1.43 18.03 1 17 1L4 1C2.35 1 1 2.35 1 4L1 17C1 18.65 2.35 20 4 20L17 20C18.65 20 20 18.65 20 17L20 7.99"></path>
-						</svg>
-						<span>Open in New Window</span>
-					</label>
-				</div>
-				<div class="details-submit flex">
-					<button id="save_details">Save</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="overlay blur-overlay popup-overlay"></div>
-	<div class="overlay overflow-overlay"></div>
-	<div class="instructions hidden">
-		<img class="up-arrow" src="../icons/up-arrow.svg">
-		<div>Snoozz your first tab/window using the pop-up menu above.</div><br>
-		<div>The Snoozz icon may be hiding inside the <span class="browser"></span> menu.</div><br>
-		<div>Don't forget to pin Snoozz to your toolbar!</div>
-	</div>
-	<div class="search-container center">
-		<div class="input-wrapper"><input id="search" autocomplete="off" type="search" placeholder="&nbsp;Search"></div>
-	</div>
-	<div id="time-container"></div>
-	<div id="no-tabs" class="hidden">
-		<div class="contain-clock">
-			<div class="face-1">
-				<div class="hour"></div>
-				<div class="minute"></div>
-				<div class="second"></div>
-				<div class="middle"></div>
-			</div> 
+            <label class="checkbox path incognito-checkbox flex">
+              <input type="checkbox" tabindex="0" />
+              <svg viewBox="0 0 21 21">
+                <path
+                  d="M5 10.75 8.5 14.25 19.4 2.3C18.83 1.43 18.03 1 17 1L4 1C2.35 1 1 2.35 1 4L1 17C1 18.65 2.35 20 4 20L17 20C18.65 20 20 18.65 20 17L20 7.99"
+                ></path>
+              </svg>
+              <span>Incognito</span>
+            </label>
+            <label class="checkbox path new-window-checkbox flex">
+              <input type="checkbox" tabindex="0" />
+              <svg viewBox="0 0 21 21">
+                <path
+                  d="M5 10.75 8.5 14.25 19.4 2.3C18.83 1.43 18.03 1 17 1L4 1C2.35 1 1 2.35 1 4L1 17C1 18.65 2.35 20 4 20L17 20C18.65 20 20 18.65 20 17L20 7.99"
+                ></path>
+              </svg>
+              <span>Open in New Window</span>
+            </label>
+          </div>
+          <div class="details-submit flex">
+            <button id="save_details">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="overlay blur-overlay popup-overlay"></div>
+    <div class="overlay overflow-overlay"></div>
+    <div class="instructions hidden">
+      <img class="up-arrow" src="../icons/up-arrow.svg" />
+      <div>Snoozz your first tab/window using the pop-up menu above.</div>
+      <br />
+      <div>
+        The Snoozz icon may be hiding inside the
+        <span class="browser"></span> menu.
+      </div>
+      <br />
+      <div>Don't forget to pin Snoozz to your toolbar!</div>
+    </div>
+    <div class="search-container center">
+      <div class="input-wrapper">
+        <input
+          id="search"
+          autocomplete="off"
+          type="search"
+          placeholder="&nbsp;Search"
+        />
+      </div>
+    </div>
+    <div id="time-container"></div>
+    <div id="no-tabs" class="hidden">
+      <div class="contain-clock">
+        <div class="face-1">
+          <div class="hour"></div>
+          <div class="minute"></div>
+          <div class="second"></div>
+          <div class="middle"></div>
+        </div>
 
-			<div class="face-2">
-				<div class="line"></div>
-				<div class="line line-2"></div>
-				<div class="line line-3"></div>
-				<div class="line line-4"></div>   
-				<div class="line line-5"></div>
-				<div class="line line-6"></div>
-			</div>
+        <div class="face-2">
+          <div class="line"></div>
+          <div class="line line-2"></div>
+          <div class="line line-3"></div>
+          <div class="line line-4"></div>
+          <div class="line line-5"></div>
+          <div class="line line-6"></div>
+        </div>
 
-			<div class="arm"></div>
-			<div class="arm arm-2"></div>
+        <div class="arm"></div>
+        <div class="arm arm-2"></div>
 
-			<div class="bell"></div>
-			<div class="bell bell-2"></div>
-		</div>
-		<span>No tabs found :(</span>
-	</div>
-	<p id="api-message" class="hidden">Like most people, tabs may take 10 minutes to get out of bed. Mainly due to API restrictions, but also, laziness.</p>
-	<p id="history-message">Tabs in your Snoozz history are removed <a id="historyHref" href="./settings.html#history">-</a> after they wake up.</p>
-	<script type="text/javascript" src="../scripts/dayjs.min.js"></script>
-	<script type="text/javascript" src="../scripts/BSF.min.js"></script>
-	<script type="text/javascript" src="../scripts/gradient.min.js"></script>
-	<script type="text/javascript" src="../scripts/lozad.min.js"></script>
-	<script type="text/javascript" src="../scripts/common.js"></script>
-	<script type="text/javascript" src="../scripts/nap_room.js"></script>
-</body>
+        <div class="bell"></div>
+        <div class="bell bell-2"></div>
+      </div>
+      <span>No tabs found :(</span>
+    </div>
+    <p id="api-message" class="hidden">
+      Like most people, tabs may take 10 minutes to get out of bed. Mainly due
+      to API restrictions, but also, laziness.
+    </p>
+    <p id="history-message">
+      Tabs in your Snoozz history are removed
+      <a id="historyHref" href="./settings.html#history">-</a> after they wake
+      up.
+    </p>
+    <script type="text/javascript" src="../scripts/dayjs.min.js"></script>
+    <script type="text/javascript" src="../scripts/BSF.min.js"></script>
+    <script type="text/javascript" src="../scripts/gradient.min.js"></script>
+    <script type="text/javascript" src="../scripts/lozad.min.js"></script>
+    <script type="text/javascript" src="../scripts/common.js"></script>
+    <script type="text/javascript" src="../scripts/nap_room.js"></script>
+  </body>
 </html>

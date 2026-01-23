@@ -13,4 +13,3 @@ Troubleshooting
 
 -	More details can be found in ./docs/safari.md
 
--	Please email the developer: rohanb10 at gmail.com

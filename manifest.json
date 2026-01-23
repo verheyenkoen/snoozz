@@ -1,73 +1,86 @@
 {
-	"name": "Snoozz - Snooze Tabs & Windows for later",
-	"short_name": "Snoozz",
-	"description": "Declutter your browser by snoozing tabs and windows until you actually need them.",
-	"version": "2.5.1",
-	
-	"icons": {
-		"128": "icons/ext-icon-128.png",
-		"48": "icons/ext-icon-48.png",
-		"32": "icons/ext-icon-32.png",
-		"16": "icons/ext-icon-16.png"
-	},
-	"manifest_version": 2,
+  "name": "Snoozz - Snooze Tabs & Windows for later",
+  "short_name": "Snoozz",
+  "description": "Declutter your browser by snoozing tabs and windows until you actually need them.",
+  "version": "2.5.1",
 
-	"browser_action": {
-		"default_popup": "html/popup.html"
-	},
-	"author": "Rohan Bhansali",
-	"options_ui": {
-		"page": "html/settings.html",
-		"open_in_tab": true
-	},
-	
-	"background": {
-		"scripts": ["scripts/dayjs.min.js", "scripts/common.js", "scripts/poll.js", "scripts/background.js"]
-	},
-	"offline_enabled": true,
+  "icons": {
+    "128": "icons/ext-icon-128.png",
+    "48": "icons/ext-icon-48.png",
+    "32": "icons/ext-icon-32.png",
+    "16": "icons/ext-icon-16.png"
+  },
+  "manifest_version": 2,
 
-	"permissions": ["alarms", "contextMenus", "idle", "notifications", "storage", "tabs"],
+  "browser_action": {
+    "default_popup": "html/popup.html"
+  },
+  "author": "Koen Verheyen",
+  "options_ui": {
+    "page": "html/settings.html",
+    "open_in_tab": true
+  },
 
-	"web_accessible_resources": ["html/settings.html"],
+  "background": {
+    "scripts": [
+      "scripts/dayjs.min.js",
+      "scripts/common.js",
+      "scripts/background.js"
+    ]
+  },
+  "offline_enabled": true,
 
-	"content_scripts": [{
-		"matches": ["https://*.snoozz.me/*"],
-		"js": ["scripts/snoozz.me.js"]
-	}],
+  "permissions": [
+    "alarms",
+    "contextMenus",
+    "idle",
+    "notifications",
+    "storage",
+    "tabs"
+  ],
 
-	"commands": {
-		"nap-room": {
-			"description": "Show me my sleeping tabs"
-		},
-		"startup": {
-			"description": "Snooze until the next time you launch your browser"
-		},
-		"in-an-hour": {
-			"description": "Snooze for an hour"
-		},
-		"today-morning": {
-			"description": "Snooze till today morning"
-		},
-		"today-evening": {
-			"description": "Snooze till today evening"
-		},
-		"tom-morning": {
-			"description": "Snooze till tomorrow morning"
-		},
-		"tom-evening": {
-			"description": "Snooze till tomorrow evening"
-		},
-		"weekend": {
-			"description": "Snooze till this Saturday"
-		},
-		"monday": {
-			"description": "Snooze till next Monday"
-		},
-		"week": {
-			"description": "Snooze till one week from now"
-		},
-		"month": {
-			"description": "Snooze till one month from now"
-		}
-	}
+  "web_accessible_resources": ["html/settings.html"],
+
+  "content_scripts": [
+    {
+      "matches": [],
+      "js": ["scripts/snoozz.me.js"]
+    }
+  ],
+
+  "commands": {
+    "nap-room": {
+      "description": "Show me my sleeping tabs"
+    },
+    "startup": {
+      "description": "Snooze until the next time you launch your browser"
+    },
+    "in-an-hour": {
+      "description": "Snooze for an hour"
+    },
+    "today-morning": {
+      "description": "Snooze till today morning"
+    },
+    "today-evening": {
+      "description": "Snooze till today evening"
+    },
+    "tom-morning": {
+      "description": "Snooze till tomorrow morning"
+    },
+    "tom-evening": {
+      "description": "Snooze till tomorrow evening"
+    },
+    "weekend": {
+      "description": "Snooze till this Saturday"
+    },
+    "monday": {
+      "description": "Snooze till next Monday"
+    },
+    "week": {
+      "description": "Snooze till one week from now"
+    },
+    "month": {
+      "description": "Snooze till one month from now"
+    }
+  }
 }
