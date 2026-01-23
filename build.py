@@ -92,7 +92,6 @@ print('\n\nCreated Chrome Release: ' + '\x1b[35m ' + name + '.zip' + '\x1b[0m')
 #
 # Add Open popup shortcut to start of manifest.commands
 #
-del data['offline_enabled']
 mod_commands = {'_execute_browser_action' : {'description': 'Open the Snoozz popup'}}
 for key, value in data['commands'].items(): mod_commands[key] = value
 

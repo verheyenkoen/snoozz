@@ -89,7 +89,12 @@ async function getStorageSize() {
   return calcObjectSize(tabs) + calcObjectSize(options);
 }
 async function isIncognitoAllowed() {
-  return new Promise((r) => chrome.extension.isAllowedIncognitoAccess(r));
+  try {
+    return await chrome.extension.isAllowedIncognitoAccess();
+  } catch (e) {
+    // Fallback for MV3
+    return false;
+  }
 }
 
 /*	SAVE 	*/
@@ -174,8 +179,8 @@ async function updateBadge(cachedTabs, cachedBadge) {
   tabs = sleeping(tabs);
   if (tabs.length > 0 && badge && ["all", "today"].includes(badge))
     num = badge === "today" ? today(tabs).length : tabs.length;
-  chrome.browserAction.setBadgeText({ text: num > 0 ? num.toString() : "" });
-  chrome.browserAction.setBadgeBackgroundColor({ color: "#0072BC" });
+  chrome.action.setBadgeText({ text: num > 0 ? num.toString() : "" });
+  chrome.action.setBadgeBackgroundColor({ color: "#0072BC" });
 }
 
 /*	OPEN 	*/

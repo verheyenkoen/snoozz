@@ -1,4 +1,5 @@
 {
+  "manifest_version": 3,
   "name": "Snoozz - Snooze Tabs & Windows for later",
   "short_name": "Snoozz",
   "description": "Declutter your browser by snoozing tabs and windows until you actually need them.",
@@ -10,25 +11,17 @@
     "32": "icons/ext-icon-32.png",
     "16": "icons/ext-icon-16.png"
   },
-  "manifest_version": 2,
 
-  "browser_action": {
+  "action": {
     "default_popup": "html/popup.html"
   },
   "author": "Koen Verheyen",
-  "options_ui": {
-    "page": "html/settings.html",
-    "open_in_tab": true
-  },
+  "options_page": "html/settings.html",
 
   "background": {
-    "scripts": [
-      "scripts/dayjs.min.js",
-      "scripts/common.js",
-      "scripts/background.js"
-    ]
+    "service_worker": "scripts/service-worker.js",
+    "type": "module"
   },
-  "offline_enabled": true,
 
   "permissions": [
     "alarms",
@@ -39,12 +32,12 @@
     "tabs"
   ],
 
-  "web_accessible_resources": ["html/settings.html"],
+  "host_permissions": ["<all_urls>"],
 
-  "content_scripts": [
+  "web_accessible_resources": [
     {
-      "matches": [],
-      "js": ["scripts/snoozz.me.js"]
+      "resources": ["sounds/appointed.mp3"],
+      "matches": ["<all_urls>"]
     }
   ],
 
