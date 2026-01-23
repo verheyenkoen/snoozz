@@ -18,9 +18,5 @@
   },
   "license": "GPL-3.0-only",
   "author": "Koen Verheyen",
-  "main": "n/a",
-  "directories": {
-    "doc": "docs"
-  },
   "scripts": {}
 }
