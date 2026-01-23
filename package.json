@@ -1,0 +1,26 @@
+{
+  "name": "snoozz",
+  "version": "2.5.1",
+  "description": "A Web Extension to declutter windows by snoozing tabs for later",
+  "keywords": [
+    "snoozz",
+    "google",
+    "chrome",
+    "extension"
+  ],
+  "homepage": "https://github.com/verheyenkoen/snoozz#readme",
+  "bugs": {
+    "url": "https://github.com/verheyenkoen/snoozz/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/verheyenkoen/snoozz.git"
+  },
+  "license": "GPL-3.0-only",
+  "author": "Koen Verheyen",
+  "main": "n/a",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {}
+}
