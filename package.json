@@ -19,6 +19,7 @@
   "license": "GPL-3.0-only",
   "author": "Koen Verheyen",
   "scripts": {
+    "version": "bun run --bun npm-hooks/version.ts",
     "build": "bun run --bun build.ts"
   },
   "private": true,
