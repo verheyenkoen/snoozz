@@ -845,7 +845,9 @@ let debounce;
 async function setNextAlarm(tabs) {
   const next = sleeping(tabs)
     .filter((t) => t.wakeUpTime && !t.paused)
-    .reduce((t1, t2) => (t1.wakeUpTime < t2.wakeUpTime ? t1 : t2), undefined);
+    .reduce((t1, t2) => (t1.wakeUpTime < t2.wakeUpTime ? t1 : t2), {
+      wakeUpTime: Infinity,
+    });
 
   if (!next) return;
   if (next.wakeUpTime <= dayjs().valueOf()) {

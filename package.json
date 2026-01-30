@@ -18,5 +18,17 @@
   },
   "license": "GPL-3.0-only",
   "author": "Koen Verheyen",
-  "scripts": {}
+  "scripts": {
+    "build": "bun run --bun build.ts"
+  },
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "chalk": "^5.6.2"
+  }
 }

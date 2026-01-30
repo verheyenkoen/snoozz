@@ -1,2 +1,4 @@
-*.zip
-snoozz-*/**/*.*
+node_modules/
+
+build_temp/
+dist/
