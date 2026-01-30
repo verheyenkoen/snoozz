@@ -1,6 +1,8 @@
+import type { ManifestData } from "../types/manifest-data";
+
 const pkg = await Bun.file("package.json").json();
 const manifestFile = Bun.file("manifest.json");
-const manifest = await manifestFile.json();
+const manifest = (await manifestFile.json()) as ManifestData;
 
 manifest.version = pkg.version;
 

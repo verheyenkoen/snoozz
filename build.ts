@@ -1,26 +1,105 @@
+import chalk from "chalk";
 import { execSync } from "child_process";
-import fs from "fs";
+import fs from "node:fs/promises";
 import path from "path";
 
-import chalk from "chalk";
-
-// Types
-interface ManifestData {
-  version: string;
-  permissions: string[];
-  commands: { [key: string]: any };
-  [key: string]: any;
-}
+import type { ManifestData } from "./types/manifest-data";
 
 // Configuration
 const TMP_FOLDER = "build_temp";
 const DIST_FOLDER = "dist";
-const manifest: ManifestData = JSON.parse(
-  fs.readFileSync("manifest.json", "utf-8"),
-);
+const manifest = (await Bun.file("manifest.json").json()) as ManifestData;
 const VERSION = manifest.version;
+const ignorePatterns = [
+  ".DS_Store",
+  ".git",
+  ".Trashes",
+  ".Spotlight-V100",
+  ".github",
+];
 
 console.log(`\n\nBuilding Snoozz ${chalk.bold.blueBright(`v${VERSION}`)}\n`);
+
+try {
+  // Step 1: Cleanup old files
+  await cleanupFolders(TMP_FOLDER, DIST_FOLDER);
+
+  // Step 2: Copy essential files
+  await fs.mkdir(TMP_FOLDER, { recursive: true });
+  await fs.mkdir(DIST_FOLDER, { recursive: true });
+  await copyDir("html", path.join(TMP_FOLDER, "html"));
+  await copyDir("icons", path.join(TMP_FOLDER, "icons"));
+  await copyDir("sounds", path.join(TMP_FOLDER, "sounds"));
+
+  // Step 3: Minify files
+  await minifyFilesInDirectory("scripts", ".js", [
+    "service-worker.js",
+    "settings.js",
+  ]);
+  await minifyFilesInDirectory("styles", ".css");
+
+  // Step 4: Update manifest file
+  await outputManifestFile();
+
+  // Step 5: Build Chrome release
+  await createArchive("snoozz-chrome", VERSION);
+  console.log(
+    `\n\nCreated Chrome Release: ${chalk.magenta(`snoozz-chrome-${VERSION}.zip`)}`,
+  );
+
+  // Step 6: Add command to manifest for Firefox
+  const modCommands: { [key: string]: any } = {
+    _execute_browser_action: { description: "Open the Snoozz popup" },
+  };
+  for (const [key, value] of Object.entries(manifest.commands || {})) {
+    modCommands[key] = value;
+  }
+  manifest.commands = modCommands;
+  await outputManifestFile();
+
+  // Step 7: Build Firefox release
+  await createArchive("snoozz-ff", VERSION);
+  console.log(
+    `Created Firefox Release: ${chalk.magenta(`snoozz-ff-${VERSION}.zip`)}`,
+  );
+
+  // Step 8: Build GitHub release
+  await copyFile("LICENSE", path.join(TMP_FOLDER, "LICENSE"));
+  await createArchive("snoozz", VERSION);
+  console.log(`Created GH Release: ${chalk.magenta(`snoozz-${VERSION}.zip`)}`);
+
+  // Step 9: Modify manifest for Safari and build
+  await copyFile("docs/safari.md", path.join(TMP_FOLDER, "safari.md"));
+  await copyFile(
+    "instructions_safari.txt",
+    path.join(TMP_FOLDER, "instructions_safari.txt"),
+  );
+  await copyFile("safari.sh", path.join(TMP_FOLDER, "safari.sh"));
+
+  if (manifest.permissions) {
+    manifest.permissions = manifest.permissions.filter(
+      (p: string) => p !== "idle" && p !== "notifications",
+    );
+    manifest.permissions = manifest.permissions.map((p: string) =>
+      p.replace("tabs", "activeTab"),
+    );
+  }
+  manifest.commands = {};
+  await outputManifestFile();
+
+  await createArchive("snoozz-safari", VERSION);
+  console.log(
+    `Created Safari Release: ${chalk.magenta(`snoozz-safari-${VERSION}.zip`)}`,
+  );
+
+  // Step 10: Cleanup
+  await cleanupFolders(TMP_FOLDER);
+
+  console.log("\n\n✓ Build completed successfully!\n");
+} catch (error) {
+  console.error("Build failed:", error);
+  process.exit(1);
+}
 
 /**
  * Execute shell command
@@ -34,67 +113,52 @@ function ex(command: string): string {
   }
 }
 
-/**
- * Remove old files and directories
- */
-function cleanupOldFiles(): void {
-  const oldDirs = [TMP_FOLDER, DIST_FOLDER];
-
-  for (const file of oldDirs) {
-    if (fs.existsSync(file)) {
-      fs.rmSync(file, { recursive: true, force: true });
-    }
+async function cleanupFolders(...folders: string[]) {
+  for (const folder of folders) {
+    await fs.rm(folder, { recursive: true, force: true });
   }
 }
 
-/**
- * Copy directory with ignore patterns
- */
-function copyDirIgnoring(
-  src: string,
-  dest: string,
-  patterns: string[] = [],
-): void {
-  if (!fs.existsSync(dest)) {
-    fs.mkdirSync(dest, { recursive: true });
+async function copyDir(src: string, dest: string) {
+  if (!(await fs.exists(dest))) {
+    await fs.mkdir(dest, { recursive: true });
   }
 
-  const files = fs.readdirSync(src);
+  const files = await fs.readdir(src);
   for (const file of files) {
-    if (patterns.includes(file)) continue;
+    if (ignorePatterns.includes(file)) continue;
 
     const srcFile = path.join(src, file);
     const destFile = path.join(dest, file);
-    const stat = fs.statSync(srcFile);
+    const stat = await fs.stat(srcFile);
 
     if (stat.isDirectory()) {
-      copyDirIgnoring(srcFile, destFile, patterns);
+      await copyDir(srcFile, destFile);
     } else {
-      fs.copyFileSync(srcFile, destFile);
+      await copyFile(srcFile, destFile);
     }
   }
 }
 
-/**
- * Replace string in HTML files
- */
-function replaceInHTMLFiles(original: string, replacement: string): void {
+async function copyFile(srcFile: string, destFile: string) {
+  const originalFile = Bun.file(srcFile);
+  await Bun.write(destFile, originalFile);
+}
+
+async function replaceInHTMLFiles(original: string, replacement: string) {
   const htmlDir = path.join(TMP_FOLDER, "html");
-  const files = fs.readdirSync(htmlDir);
+  const htmlFiles = await fs.readdir(htmlDir);
 
-  for (const file of files) {
-    if (file.endsWith(".html")) {
-      const filePath = path.join(htmlDir, file);
-      let content = fs.readFileSync(filePath, "utf-8");
+  for (const htmlFile of htmlFiles) {
+    if (htmlFile.endsWith(".html")) {
+      const file = Bun.file(path.join(htmlDir, htmlFile));
+      let content = await file.text();
       content = content.replace(new RegExp(original, "g"), replacement);
-      fs.writeFileSync(filePath, content, "utf-8");
+      await Bun.write(file, content);
     }
   }
 }
 
-/**
- * Replace in manifest
- */
 function replaceInManifest(original: string, replacement: string): void {
   const manifestStr = JSON.stringify(manifest).replace(
     new RegExp(original, "g"),
@@ -103,21 +167,18 @@ function replaceInManifest(original: string, replacement: string): void {
   Object.assign(manifest, JSON.parse(manifestStr));
 }
 
-/**
- * Minify files in directory
- */
-function minifyFilesInDirectory(
+async function minifyFilesInDirectory(
   directory: string,
   ext: string,
   exclude: string[] = [],
-): void {
+): Promise<Promise<Promise<void>>> {
   const targetDir = path.join(TMP_FOLDER, directory);
 
-  if (!fs.existsSync(targetDir)) {
-    fs.mkdirSync(targetDir, { recursive: true });
+  if (!(await fs.exists(targetDir))) {
+    await fs.mkdir(targetDir, { recursive: true });
   }
 
-  const files = fs.readdirSync(directory);
+  const files = await fs.readdir(directory);
   const sameSize = (str: string) => str.padEnd(16);
 
   for (const name of files) {
@@ -133,14 +194,14 @@ function minifyFilesInDirectory(
 
     try {
       if (exclude.includes(name) || name.endsWith(`.min${ext}`)) {
-        fs.copyFileSync(srcPath, path.join(targetDir, name));
+        await copyFile(srcPath, path.join(targetDir, name));
         console.log(
           `\r✓ Copied    ${chalk.bold.yellowBright(sameSize(name))} -> ${chalk.bold.green(name)}`,
           "",
         );
       } else if (ext === ".js") {
         ex(`uglifyjs ${srcPath} -c -m -o ${destPath}`);
-        replaceInHTMLFiles(name, destName);
+        await replaceInHTMLFiles(name, destName);
         replaceInManifest(name, destName);
         console.log(
           `\r✓ Minified  ${chalk.bold.yellowBright(sameSize(name))} -> ${chalk.bold.green(destName)}`,
@@ -148,7 +209,7 @@ function minifyFilesInDirectory(
         );
       } else if (ext === ".css") {
         ex(`csso ${srcPath} -o ${destPath}`);
-        replaceInHTMLFiles(name, destName);
+        await replaceInHTMLFiles(name, destName);
         console.log(
           `\r✓ Minified  ${chalk.bold.yellowBright(sameSize(name))} -> ${chalk.bold.green(destName)}`,
           "",
@@ -160,129 +221,13 @@ function minifyFilesInDirectory(
   }
 }
 
-/**
- * Create archive (zip)
- */
-function createArchive(sourceDir: string, outputName: string): void {
-  // For Node.js, we'll use the 'archiver' package or system command
-  // Using system command for simplicity
-  ex(
-    `cd ${path.dirname(sourceDir)} && zip -r ${outputName}.zip ${path.basename(sourceDir)}`,
-  );
+async function outputManifestFile() {
+  const tempManifestFile = Bun.file(path.join(TMP_FOLDER, "manifest.json"));
+  await Bun.write(tempManifestFile, JSON.stringify(manifest, null, 4));
 }
 
-/**
- * Main build process
- */
-async function build(): Promise<void> {
-  try {
-    // Step 1: Cleanup old files
-    cleanupOldFiles();
-
-    // Step 2: Copy essential files
-    const ignorePatterns = [
-      ".DS_Store",
-      ".git",
-      ".Trashes",
-      ".Spotlight-V100",
-      ".github",
-    ];
-
-    fs.mkdirSync(TMP_FOLDER, { recursive: true });
-    fs.mkdirSync(DIST_FOLDER, { recursive: true });
-    copyDirIgnoring("html", path.join(TMP_FOLDER, "html"), ignorePatterns);
-    copyDirIgnoring("icons", path.join(TMP_FOLDER, "icons"), ignorePatterns);
-    copyDirIgnoring("sounds", path.join(TMP_FOLDER, "sounds"), ignorePatterns);
-
-    // Step 3: Minify files
-    minifyFilesInDirectory("scripts", ".js", [
-      "service-worker.js",
-      "settings.js",
-    ]);
-    minifyFilesInDirectory("styles", ".css");
-
-    // Step 4: Update manifest file
-    fs.writeFileSync(
-      path.join(TMP_FOLDER, "manifest.json"),
-      JSON.stringify(manifest, null, 4),
-      "utf-8",
-    );
-
-    // Step 5: Build Chrome release
-    let name = `snoozz-chrome-${VERSION}`;
-    fs.mkdirSync(path.join(DIST_FOLDER, name), { recursive: true });
-    fs.cpSync(TMP_FOLDER, path.join(DIST_FOLDER, name), { recursive: true });
-    ex(`cd ${DIST_FOLDER} && zip -r ${name}.zip ${name}`);
-    console.log(`\n\nCreated Chrome Release: ${chalk.magenta(name + ".zip")}`);
-
-    // Step 6: Add command to manifest for Firefox
-    const modCommands: { [key: string]: any } = {
-      _execute_browser_action: { description: "Open the Snoozz popup" },
-    };
-    for (const [key, value] of Object.entries(manifest.commands || {})) {
-      modCommands[key] = value;
-    }
-    manifest.commands = modCommands;
-    fs.writeFileSync(
-      path.join(TMP_FOLDER, "manifest.json"),
-      JSON.stringify(manifest, null, 4),
-      "utf-8",
-    );
-
-    // Step 7: Build Firefox release
-    name = `snoozz-ff-${VERSION}`;
-    fs.mkdirSync(path.join(DIST_FOLDER, name), { recursive: true });
-    fs.cpSync(TMP_FOLDER, path.join(DIST_FOLDER, name), { recursive: true });
-    ex(`cd ${DIST_FOLDER} && zip -r ${name}.zip ${name}`);
-    console.log(`Created Firefox Release: ${chalk.magenta(name + ".zip")}`);
-
-    // Step 8: Build GitHub release
-    fs.copyFileSync("LICENSE", path.join(TMP_FOLDER, "LICENSE"));
-    name = `snoozz-${VERSION}`;
-    fs.mkdirSync(path.join(DIST_FOLDER, name), { recursive: true });
-    fs.cpSync(TMP_FOLDER, path.join(DIST_FOLDER, name), { recursive: true });
-    ex(`cd ${DIST_FOLDER} && zip -r ${name}.zip ${name}`);
-    console.log(`Created GH Release: ${chalk.magenta(name + ".zip")}`);
-
-    // Step 9: Modify manifest for Safari and build
-    fs.copyFileSync("docs/safari.md", path.join(TMP_FOLDER, "safari.md"));
-    fs.copyFileSync(
-      "instructions_safari.txt",
-      path.join(TMP_FOLDER, "instructions_safari.txt"),
-    );
-    fs.copyFileSync("safari.sh", path.join(TMP_FOLDER, "safari.sh"));
-
-    if (manifest.permissions) {
-      manifest.permissions = manifest.permissions.filter(
-        (p: string) => p !== "idle" && p !== "notifications",
-      );
-      manifest.permissions = manifest.permissions.map((p: string) =>
-        p.replace("tabs", "activeTab"),
-      );
-    }
-    manifest.commands = {};
-
-    fs.writeFileSync(
-      path.join(TMP_FOLDER, "manifest.json"),
-      JSON.stringify(manifest, null, 4),
-      "utf-8",
-    );
-
-    name = `snoozz-safari-${VERSION}`;
-    fs.mkdirSync(path.join(DIST_FOLDER, name), { recursive: true });
-    fs.cpSync(TMP_FOLDER, path.join(DIST_FOLDER, name), { recursive: true });
-    ex(`cd ${DIST_FOLDER} && zip -r ${name}.zip ${name}`);
-    console.log(`Created Safari Release: ${chalk.magenta(name + ".zip")}`);
-
-    // Step 10: Cleanup
-    fs.rmSync(TMP_FOLDER, { recursive: true, force: true });
-
-    console.log("\n\n✓ Build completed successfully!\n");
-  } catch (error) {
-    console.error("Build failed:", error);
-    process.exit(1);
-  }
+async function createArchive(name: string, version: string) {
+  await fs.mkdir(path.join(DIST_FOLDER, name), { recursive: true });
+  await fs.cp(TMP_FOLDER, path.join(DIST_FOLDER, name), { recursive: true });
+  ex(`cd ${DIST_FOLDER} && zip -r ${name}-${version}.zip ${name}`);
 }
-
-// Run the build
-build();
