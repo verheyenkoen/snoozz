@@ -3,26 +3,22 @@
   "name": "Snoozz - Snooze Tabs & Windows for later",
   "short_name": "Snoozz",
   "description": "Declutter your browser by snoozing tabs and windows until you actually need them.",
-  "version": "2.5.1",
-
+  "version": "2.6.0",
   "icons": {
-    "128": "icons/ext-icon-128.png",
-    "48": "icons/ext-icon-48.png",
+    "16": "icons/ext-icon-16.png",
     "32": "icons/ext-icon-32.png",
-    "16": "icons/ext-icon-16.png"
+    "48": "icons/ext-icon-48.png",
+    "128": "icons/ext-icon-128.png"
   },
-
   "action": {
     "default_popup": "html/popup.html"
   },
   "author": "Koen Verheyen",
   "options_page": "html/settings.html",
-
   "background": {
     "service_worker": "scripts/service-worker.js",
     "type": "module"
   },
-
   "permissions": [
     "alarms",
     "contextMenus",
@@ -31,16 +27,19 @@
     "storage",
     "tabs"
   ],
-
-  "host_permissions": ["<all_urls>"],
-
+  "host_permissions": [
+    "<all_urls>"
+  ],
   "web_accessible_resources": [
     {
-      "resources": ["sounds/appointed.mp3"],
-      "matches": ["<all_urls>"]
+      "resources": [
+        "sounds/appointed.mp3"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ],
-
   "commands": {
     "nap-room": {
       "description": "Show me my sleeping tabs"
