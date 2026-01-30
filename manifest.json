@@ -3,7 +3,7 @@
   "name": "Snoozz - Snooze Tabs & Windows for later",
   "short_name": "Snoozz",
   "description": "Declutter your browser by snoozing tabs and windows until you actually need them.",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "icons": {
     "16": "icons/ext-icon-16.png",
     "32": "icons/ext-icon-32.png",
