@@ -32,4 +32,8 @@ assignees: verheyenkoen
 
 <!-- Where did you find the bug:  [Popup / Nap Room / Settings / All] -->
 
+## Extension version
+
+<!-- You can find this at the bottom of the settings page -->
+
 ## Screenshots / Videos / Logs
